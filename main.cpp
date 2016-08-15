@@ -42,7 +42,7 @@ public:
     unique_ptr<EUPM> next;
     virtual unique_ptr<EUPM> f(unique_ptr<EUPM> p){
 //        next=move(p);
-        return move(p); //move(next->next);
+        return p; //move(next->next);
     }
 
 };
@@ -92,7 +92,7 @@ void measure(int f(),string s)
 
 
 constexpr long long num = 2000000000L;
-constexpr long long numP = num/100L;
+//constexpr long long numP = num/100L;
 /*
 template<typename P>void f(){
     P up1(new P());
