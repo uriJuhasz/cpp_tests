@@ -1,8 +1,10 @@
 #include <iostream>
+#include <iomanip>
 #include <memory>
 #include <chrono>
 #include <cmath>
 #include <cassert>
+#include <random>
 using namespace std;
 
 class C{ protected:virtual ~C(){}};
@@ -16,11 +18,11 @@ public:
     EP& operator=(const EP&) = delete;
     EP* next;
     virtual EP* f(EP*p){
-        next=p;
-        p=nullptr;
-        EP* r = next->next;
-        next=nullptr;
-        return r;
+//        next=p;
+//        p=nullptr;
+//        EP* r = next->next;
+//        next=nullptr;
+        return p;
     }
 };
 
@@ -28,6 +30,7 @@ class EP1 : public EP{
 public:
     EP1() : EP(){}
     virtual EP1* f(EP*){
+        throw new exception();
         return this;
     }
 };
@@ -38,8 +41,8 @@ public:
     virtual ~EUPM(){}
     unique_ptr<EUPM> next;
     virtual unique_ptr<EUPM> f(unique_ptr<EUPM> p){
-        next=move(p);
-        return move(next->next);
+//        next=move(p);
+        return move(p); //move(next->next);
     }
 
 };
@@ -48,6 +51,7 @@ class EUPM1 : public EUPM{
 public:
     EUPM1() : EUPM(){}
     virtual unique_ptr<EUPM> f(unique_ptr<EUPM> p){
+        throw new exception();
         return p;
     }
 };
@@ -59,8 +63,9 @@ public:
     virtual ~EUPR(){}
     unique_ptr<EUPR> next;
     virtual unique_ptr<EUPR> f(unique_ptr<EUPR>& p){
-        next=move(p);
-        return move(next->next);
+//        next=move(p);
+//        return move(next->next);
+        return move(p);
     }
 
 };
@@ -69,6 +74,7 @@ class EUPR1 : public EUPR{
 public:
     EUPR1() : EUPR(){}
     virtual unique_ptr<EUPR> f(unique_ptr<EUPR>& p){
+        throw new exception();
         return move(p);
     }
 };
@@ -81,11 +87,11 @@ void measure(int f(),string s)
 
     std::chrono::duration<double> elapsed_seconds = endT-startT;
 
-    std::cout << s << " time: " << lround(1000000 * elapsed_seconds.count()) << "ns" << endl;
+    std::cout << s << " time: " << setw(10) << lround(1000000 * elapsed_seconds.count()) << "ns" << endl;
 }
 
 
-constexpr long long num = 100000000L;
+constexpr long long num = 2000000000L;
 constexpr long long numP = num/100L;
 /*
 template<typename P>void f(){
@@ -101,7 +107,7 @@ template<typename P>void f(){
 bool ud(){
     random_device r;
     int x = ((r() % 100) + 100) %100;
-    return (x*x-2*x+1==x*x-1)
+    return (x*x-2*x+1!=x*x-2);
 }
 
 EP* ffP(EP* p){
@@ -110,7 +116,7 @@ EP* ffP(EP* p){
     return r;
 }
 int fP(){
-    EP* p1 = new EP();
+    EP* p1 = ud() ? new EP : new EP1;
     EP* p2;
     long j=0;
     for (long long i=0;i<num;i++){
@@ -130,14 +136,14 @@ int fP(){
     return move(q->next->next);
 }*/
 int fUPR(){
-    unique_ptr<EUPR> p1 = make_unique<EUPR>();
+    unique_ptr<EUPR> p1 = ud() ? make_unique<EUPR>() : make_unique<EUPR1>();
     unique_ptr<EUPR> p2;
     long j=0;
     for (long long i=0;i<num;i++){
         p2=p1->f(p1);
-        p1=nullptr;
+//        p1=nullptr;
         p1=p2->f(p2);
-        p2=nullptr;
+//        p2=nullptr;
         j+=i*j;
     }
     return j;
@@ -152,12 +158,12 @@ unique_ptr<EUP> ffUPM(unique_ptr<EUP> p){
     return move(q->next->next);
 }*/
 int fUPM(){
-    unique_ptr<EUPM> p1 = make_unique<EUPM>();
+    unique_ptr<EUPM> p1 = ud() ? make_unique<EUPM>() : make_unique<EUPM1>();
     unique_ptr<EUPM> p2;
     long j = 0;
     for (long i=0;i<num;i++){
-        p2=move(p1->f(move(p1)));
-        p1=move(p2->f(move(p2)));
+        p2=p1->f(move(p1));
+        p1=p2->f(move(p2));
         j+=i*j;
     }
     return j;
