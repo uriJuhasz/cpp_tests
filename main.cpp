@@ -123,7 +123,9 @@ int fP(){
 //        if (i%numP==0)
 //            cout << "i:" << i << endl;
         p2=p1->f(p1);
+        p1=nullptr;
         p1=p2->f(p2);
+        p2=nullptr;
         j+=i*j;
     }
     return j;
