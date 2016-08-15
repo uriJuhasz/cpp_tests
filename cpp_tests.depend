@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1471262165 source:/home/uri/projects/cpp_tests/main.cpp
+	<iostream>
+	<memory>
+	<chrono>
+	<cmath>
+	<cassert>
+
